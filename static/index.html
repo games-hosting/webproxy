@@ -83,10 +83,7 @@
     sw:      "https://cdn.jsdelivr.net/npm/@titaniumnetwork-dev/ultraviolet@2/dist/uv.sw.js",
   };
 
-  navigator.serviceWorker.register(
-    "https://cdn.jsdelivr.net/npm/@titaniumnetwork-dev/ultraviolet@2/dist/uv.sw.js",
-    { scope: "/service/" }
-  ).catch(console.error);
+  navigator.serviceWorker.register("/uv.sw.js", { scope: "/service/" })
 
   function go(url) {
     url = url || document.getElementById("inp").value.trim();
