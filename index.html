@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Proxy</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0f0f13;
+      color: #e8e8f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #1a1a24;
+      border: 1px solid #2e2e40;
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+    }
+    h1 { font-size: 26px; margin-bottom: 8px; }
+    .sub { color: #8888a0; font-size: 14px; margin-bottom: 32px; }
+    .row {
+      display: flex;
+      gap: 8px;
+      background: #22222f;
+      border: 1px solid #2e2e40;
+      border-radius: 12px;
+      padding: 6px 6px 6px 14px;
+    }
+    .row:focus-within { border-color: #7c6af7; }
+    input {
+      flex: 1; background: none; border: none; outline: none;
+      color: #e8e8f0; font-size: 15px; padding: 8px 0;
+    }
+    input::placeholder { color: #8888a0; }
+    button {
+      background: #7c6af7; color: #fff; border: none;
+      border-radius: 8px; padding: 10px 18px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    button:hover { background: #9585f8; }
+    .links { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    a {
+      background: #22222f; border: 1px solid #2e2e40; color: #8888a0;
+      border-radius: 20px; padding: 6px 14px; font-size: 13px;
+      cursor: pointer; text-decoration: none;
+    }
+    a:hover { border-color: #7c6af7; color: #e8e8f0; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>🌐 Proxy</h1>
+  <p class="sub">Enter a URL or search query</p>
+  <div class="row">
+    <input id="inp" placeholder="google.com or search something…" autocomplete="off" spellcheck="false" />
+    <button onclick="go()">Go →</button>
+  </div>
+  <div class="links">
+    <a onclick="go('google.com')">Google</a>
+    <a onclick="go('youtube.com')">YouTube</a>
+    <a onclick="go('reddit.com')">Reddit</a>
+    <a onclick="go('github.com')">GitHub</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@titaniumnetwork-dev/ultraviolet@2/dist/uv.bundle.js"></script>
+<script>
+  self.__uv$config = {
+    prefix: "/service/",
+    encodeUrl: Ultraviolet.codec.xor.encode,
+    decodeUrl: Ultraviolet.codec.xor.decode,
+    handler: "https://cdn.jsdelivr.net/npm/@titaniumnetwork-dev/ultraviolet@2/dist/uv.handler.js",
+    bundle:  "https://cdn.jsdelivr.net/npm/@titaniumnetwork-dev/ultraviolet@2/dist/uv.bundle.js",
+    config:  "/uv.config.js",
+    sw:      "https://cdn.jsdelivr.net/npm/@titaniumnetwork-dev/ultraviolet@2/dist/uv.sw.js",
+  };
+
+  navigator.serviceWorker.register(
+    "https://cdn.jsdelivr.net/npm/@titaniumnetwork-dev/ultraviolet@2/dist/uv.sw.js",
+    { scope: "/service/" }
+  ).catch(console.error);
+
+  function go(url) {
+    url = url || document.getElementById("inp").value.trim();
+    if (!url) return;
+    if (!url.match(/^https?:\/\//)) {
+      url = url.includes(".") ? "https://" + url : "https://www.google.com/search?q=" + encodeURIComponent(url);
+    }
+    location.href = "/service/" + __uv$config.encodeUrl(url);
+  }
+
+  document.getElementById("inp").addEventListener("keydown", e => {
+    if (e.key === "Enter") go();
+  });
+</script>
+</body>
+</html>
